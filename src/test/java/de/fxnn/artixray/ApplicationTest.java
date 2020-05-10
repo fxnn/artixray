@@ -1,7 +1,6 @@
 package de.fxnn.artixray;
 
 import io.quarkus.test.junit.QuarkusTest;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import static io.restassured.RestAssured.given;
@@ -11,13 +10,15 @@ import static org.hamcrest.CoreMatchers.is;
 public class ApplicationTest {
 
     @Test
-    @Disabled("'hello' endpoint from demo removed")
-    public void testHelloEndpoint() {
+    public void artifactFileEndpoint() {
+        String coordinates = "groupId:artifactId:version";
+        String filePath = "path/to/file";
+
         given()
-          .when().get("/artifact")
+          .when().get("/artifact/{coordinates}/file/{filePath}", coordinates, filePath)
           .then()
              .statusCode(200)
-             .body(is("hello"));
+             .body(is(coordinates + "\n" + filePath + "\n"));
     }
 
 }

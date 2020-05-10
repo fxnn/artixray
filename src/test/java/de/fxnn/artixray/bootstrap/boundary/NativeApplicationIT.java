@@ -1,4 +1,4 @@
-package de.fxnn.artixray;
+package de.fxnn.artixray.bootstrap.boundary;
 
 import io.quarkus.test.junit.NativeImageTest;
 

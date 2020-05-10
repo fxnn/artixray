@@ -3,13 +3,15 @@ package de.fxnn.artixray.archive.control;
 import de.fxnn.artixray.archive.boundary.Archive;
 import de.fxnn.artixray.archive.boundary.ArchiveFile;
 import de.fxnn.artixray.archive.boundary.ArchiveResolver;
+import io.quarkus.test.Mock;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.ws.rs.core.MediaType;
 import java.io.ByteArrayInputStream;
 
+@Mock
 @ApplicationScoped
-public class DummyArchiveResolver implements ArchiveResolver {
+public class MockArchiveResolver implements ArchiveResolver {
 
   @Override
   public Archive resolve(String coordinates) {

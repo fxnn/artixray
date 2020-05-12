@@ -34,8 +34,8 @@ public class DefaultArchiveResolver implements ArchiveResolver {
 
   @Override
   public Archive resolve(String coordinatesString) {
-    ArtifactCoordinates coordinates = ArtifactCoordinates.fromString(coordinatesString);
-    if (coordinates.getVersion().equals("RELEASE")) {
+    ArtifactCoordinate coordinates = ArtifactCoordinate.fromString(coordinatesString);
+    if (coordinates.getVersion() == null) {
       URL metadataUrl = createMetadataUrl(coordinates);
       try (InputStream is = metadataUrl.openStream()) {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -46,7 +46,7 @@ public class DefaultArchiveResolver implements ArchiveResolver {
         XPathExpression expr = xpath.compile("/metadata/versioning/release");
         String version = expr.evaluate(document);
         return createDummyArchive(
-            new ArtifactCoordinates(coordinates.getGroupId(), coordinates.getArtifactId(), coordinates.getType(),
+            new ArtifactCoordinate(coordinates.getGroupId(), coordinates.getArtifactId(), coordinates.getType(),
                 coordinates.getClassifier(), version));
       } catch (IOException e) {
         throw new IllegalStateException("Failed to download '" + metadataUrl + "' for artifact '" + coordinates + "'",
@@ -59,7 +59,7 @@ public class DefaultArchiveResolver implements ArchiveResolver {
     return createDummyArchive(coordinates);
   }
 
-  private Archive createDummyArchive(ArtifactCoordinates coordinates) {
+  private Archive createDummyArchive(ArtifactCoordinate coordinates) {
     return new Archive() {
 
       @Override
@@ -75,7 +75,7 @@ public class DefaultArchiveResolver implements ArchiveResolver {
     };
   }
 
-  private URL createMetadataUrl(ArtifactCoordinates coordinates) {
+  private URL createMetadataUrl(ArtifactCoordinate coordinates) {
     var builder = new StringBuilder();
     builder.append(repoUrl);
     if (!repoUrl.endsWith("/")) {

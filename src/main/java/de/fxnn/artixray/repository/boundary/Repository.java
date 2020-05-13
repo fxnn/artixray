@@ -1,13 +1,10 @@
 package de.fxnn.artixray.repository.boundary;
 
-import de.fxnn.artixray.archive.control.ArtifactCoordinate;
-
 import java.io.IOException;
 import java.io.InputStream;
 
 public interface Repository {
 
-  String PATH_DELIMITER = "/";
   String RELEASE_PLACEHOLDER = "RELEASE";
   String LATEST_PLACEHOLDER = "LATEST";
 
@@ -30,14 +27,13 @@ public interface Repository {
    * @param coordinate Coordinate for the requested file.
    * @return An {@link InputStream} to the requested file.
    */
-  InputStream openStream(ArtifactCoordinate coordinate);
+  InputStream openStream(ArtifactCoordinate coordinate) throws IOException;
 
   /**
    * Opens a stream for a file in this repository.
-   * @param path Path to the requested file. Individual path compoments are to be separated using
-   *             {@link #PATH_DELIMITER}. The path must not start with a delimiter.
+   * @param pathComponents Path to the requested file.
    * @return An {@link InputStream} to the requested file.
    */
-  InputStream openStream(String path) throws IOException;
+  InputStream openStream(String... pathComponents) throws IOException;
 
 }

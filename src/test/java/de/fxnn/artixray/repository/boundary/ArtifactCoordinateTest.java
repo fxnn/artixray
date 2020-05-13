@@ -1,4 +1,4 @@
-package de.fxnn.artixray.archive.control;
+package de.fxnn.artixray.repository.boundary;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

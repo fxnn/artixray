@@ -1,10 +1,6 @@
 package de.fxnn.artixray.repository.control;
 
 import de.fxnn.artixray.repository.boundary.Repository;
-import de.fxnn.artixray.util.boundary.XmlDocuments;
-import org.w3c.dom.Document;
-
-import javax.xml.xpath.XPathExpressionException;
 
 public class Maven2Version {
 
@@ -14,13 +10,7 @@ public class Maven2Version {
     this.version = version;
   }
 
-  public String resolveUsingMetadata(Document document) throws XPathExpressionException {
-    if (isEmpty() || isLatestPlaceholder()) {
-      return XmlDocuments.evaluateXPath(document, "/metadata/versioning/latest");
-    }
-    if (isReleasePlaceholder()) {
-      return XmlDocuments.evaluateXPath(document, "/metadata/versioning/release");
-    }
+  public String getVersion() {
     return version;
   }
 

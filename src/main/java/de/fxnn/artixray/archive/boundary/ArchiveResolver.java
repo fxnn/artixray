@@ -7,9 +7,9 @@ public interface ArchiveResolver {
    * <p/>
    * An implementation must provide some mechanism to download the archive, unpack its contents and thus provide files
    * from the archive. However, the exact means of doing so is up to the implementation.
-   * @param coordinates
+   * @param coordinate
    * @return
    */
-  Archive resolve(String coordinates);
+  Archive resolve(String coordinate);
 
 }

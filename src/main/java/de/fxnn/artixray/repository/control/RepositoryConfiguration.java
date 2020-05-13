@@ -9,7 +9,6 @@ import javax.inject.Inject;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-@ApplicationScoped
 public class RepositoryConfiguration {
 
   private static final String REPO_URL_DEFAULT_VALUE = "https://repo1.maven.org/maven2/";

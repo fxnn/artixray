@@ -1,4 +1,4 @@
-package de.fxnn.artixray.archive.control;
+package de.fxnn.artixray.repository.boundary;
 
 import java.util.regex.Pattern;
 
@@ -39,6 +39,16 @@ public class ArtifactCoordinate {
 
   public String getVersion() {
     return version;
+  }
+
+  public String toFileName() {
+    var builder = new StringBuilder(artifactId);
+    builder.append("-").append(version);
+    if (classifier != null) {
+      builder.append("-").append(classifier);
+    }
+    builder.append(".").append(type);
+    return builder.toString();
   }
 
   @Override

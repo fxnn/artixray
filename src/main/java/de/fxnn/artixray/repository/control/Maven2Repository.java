@@ -1,6 +1,6 @@
 package de.fxnn.artixray.repository.control;
 
-import de.fxnn.artixray.archive.control.ArtifactCoordinate;
+import de.fxnn.artixray.repository.boundary.ArtifactCoordinate;
 import de.fxnn.artixray.repository.boundary.Repository;
 import de.fxnn.artixray.util.boundary.XmlDocuments;
 import org.slf4j.Logger;
@@ -14,6 +14,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class Maven2Repository implements Repository {
 
@@ -29,46 +32,65 @@ public class Maven2Repository implements Repository {
     Maven2Version version = new Maven2Version(coordinate.getVersion());
     if (version.isPlaceholderOrEmpty()) {
       try (InputStream is = openMetadataStream(coordinate)) {
-        Document document = XmlDocuments.parse(is);
-        String resolvedVersion = version.resolveUsingMetadata(document);
+        String resolvedVersion = resolveVersion(version, is);
         LOG.trace("For coordinate '{}', resolved version '{}' using repository '{}'", coordinate, resolvedVersion, url);
         return new ArtifactCoordinate(coordinate.getGroupId(), coordinate.getArtifactId(), coordinate.getType(),
             coordinate.getClassifier(), resolvedVersion);
       } catch (IOException e) {
         throw new IllegalStateException("Failed to download metadata for artifact '" + coordinate + "'", e);
-      } catch (ParserConfigurationException | XPathExpressionException | SAXException e) {
-        throw new IllegalStateException("Failed to parse metadata for artifact '" + coordinate + "'", e);
       }
     }
 
     return coordinate;
   }
 
-  private InputStream openMetadataStream(ArtifactCoordinate coordinates) throws IOException {
-    var pathBuilder = new StringBuilder();
-    pathBuilder.append(coordinates.getGroupId().replaceAll("\\.", Repository.PATH_DELIMITER));
-    pathBuilder.append(Repository.PATH_DELIMITER);
-    pathBuilder.append(coordinates.getArtifactId());
-    pathBuilder.append(Repository.PATH_DELIMITER);
-    pathBuilder.append("maven-metadata.xml");
-    return openStream(pathBuilder.toString());
-  }
-
-  @Override
-  public InputStream openStream(ArtifactCoordinate coordinate) {
-    return null;
-  }
-
-  @Override
-  public InputStream openStream(String path) throws IOException {
+  private String resolveVersion(Maven2Version version, InputStream xmlMetadataStream) {
     try {
-      var builder = new StringBuilder(url.toExternalForm());
-      if (!builder.toString().endsWith("/")) {
-        builder.append("/");
+      Document metadataDocument = XmlDocuments.parse(xmlMetadataStream);
+      if (version.isEmpty() || version.isLatestPlaceholder()) {
+        return XmlDocuments.evaluateXPath(metadataDocument, "/metadata/versioning/latest");
       }
-      builder.append(path);
+      if (version.isReleasePlaceholder()) {
+        return XmlDocuments.evaluateXPath(metadataDocument, "/metadata/versioning/release");
+      }
+      return version.getVersion();
 
-      var url = new URL(builder.toString());
+    } catch (IOException | ParserConfigurationException | SAXException e) {
+      throw new IllegalStateException("Failed to parse metadata", e);
+    } catch (XPathExpressionException ex) {
+      throw new IllegalStateException("Failed to evaluate XPath expression", ex);
+    }
+  }
+
+  private InputStream openMetadataStream(ArtifactCoordinate coordinates) throws IOException {
+    return openStream(createPathRelativeToGroupIdAndArtifactId(coordinates, "maven-metadata.xml"));
+  }
+
+  @Override
+  public InputStream openStream(ArtifactCoordinate coordinate) throws IOException {
+    return openStream(createPathRelativeToGroupIdAndArtifactId(coordinate, coordinate.getVersion(), coordinate.toFileName()));
+  }
+
+  private String[] createPathRelativeToGroupIdAndArtifactId(ArtifactCoordinate coordinates, String... pathComponents) {
+    List<String> path = new ArrayList<>(Arrays.asList(coordinates.getGroupId().split("\\.")));
+    path.add(coordinates.getArtifactId());
+    path.addAll(Arrays.asList(pathComponents));
+    return path.toArray(new String[0]);
+  }
+
+  @Override
+  public InputStream openStream(String... pathComponents) throws IOException {
+    var builder = new StringBuilder(url.toExternalForm());
+    if (builder.toString().endsWith("/")) {
+      builder.deleteCharAt(builder.length() - 1);
+    }
+    for (String pathComponent : pathComponents) {
+      builder.append("/").append(pathComponent);
+    }
+    String path = builder.toString();
+
+    try {
+      var url = new URL(path);
       return openStream(url);
     } catch (MalformedURLException e) {
       throw new IllegalArgumentException("Cannot create valid URL for path '" + path + "'", e);

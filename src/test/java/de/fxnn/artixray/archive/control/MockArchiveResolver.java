@@ -14,13 +14,13 @@ import java.io.ByteArrayInputStream;
 public class MockArchiveResolver implements ArchiveResolver {
 
   @Override
-  public Archive resolve(String coordinates) {
+  public Archive resolve(String coordinate) {
     return new Archive() {
 
       @Override
       public ArchiveFile readFile(String filePath) {
         StringBuilder resultBuilder = new StringBuilder();
-        resultBuilder.append(coordinates).append("\n");
+        resultBuilder.append(coordinate).append("\n");
         resultBuilder.append(filePath).append("\n");
 
         byte[] resultBytes = resultBuilder.toString().getBytes();

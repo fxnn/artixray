@@ -3,6 +3,7 @@ package de.fxnn.artixray.archive.control;
 import de.fxnn.artixray.archive.boundary.Archive;
 import de.fxnn.artixray.archive.boundary.ArchiveFile;
 import de.fxnn.artixray.archive.boundary.ArchiveResolver;
+import de.fxnn.artixray.repository.boundary.ArtifactCoordinate;
 import de.fxnn.artixray.repository.boundary.Repository;
 
 import javax.enterprise.context.ApplicationScoped;

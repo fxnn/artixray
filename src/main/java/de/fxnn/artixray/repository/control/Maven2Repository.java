@@ -12,19 +12,15 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathExpressionException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 public class Maven2Repository implements Repository {
 
   private static final Logger LOG = LoggerFactory.getLogger(Maven2Repository.class);
-  private final URL url;
+  private final Maven2RepositoryUrlFactory urlFactory;
 
-  public Maven2Repository(URL url) {
-    this.url = url;
+  public Maven2Repository(URL baseUrl) {
+    this.urlFactory = new Maven2RepositoryUrlFactory(baseUrl);
   }
 
   @Override
@@ -33,7 +29,8 @@ public class Maven2Repository implements Repository {
     if (version.isPlaceholderOrEmpty()) {
       try (InputStream is = openMetadataStream(coordinate)) {
         String resolvedVersion = resolveVersion(version, is);
-        LOG.trace("For coordinate '{}', resolved version '{}' using repository '{}'", coordinate, resolvedVersion, url);
+        LOG.trace("For coordinate '{}', resolved version '{}' using repository '{}'", coordinate, resolvedVersion,
+            getBaseUrl());
         return new ArtifactCoordinate(coordinate.getGroupId(), coordinate.getArtifactId(), coordinate.getType(),
             coordinate.getClassifier(), resolvedVersion);
       } catch (IOException e) {
@@ -42,6 +39,10 @@ public class Maven2Repository implements Repository {
     }
 
     return coordinate;
+  }
+
+  private URL getBaseUrl() {
+    return urlFactory.getBaseUrl();
   }
 
   private String resolveVersion(Maven2Version version, InputStream xmlMetadataStream) {
@@ -62,39 +63,18 @@ public class Maven2Repository implements Repository {
     }
   }
 
-  private InputStream openMetadataStream(ArtifactCoordinate coordinates) throws IOException {
-    return openStream(createPathRelativeToGroupIdAndArtifactId(coordinates, "maven-metadata.xml"));
+  private InputStream openMetadataStream(ArtifactCoordinate coordinate) throws IOException {
+    return openStream(urlFactory.createUrlForMetadata(coordinate));
   }
 
   @Override
   public InputStream openStream(ArtifactCoordinate coordinate) throws IOException {
-    return openStream(createPathRelativeToGroupIdAndArtifactId(coordinate, coordinate.getVersion(), coordinate.toFileName()));
-  }
-
-  private String[] createPathRelativeToGroupIdAndArtifactId(ArtifactCoordinate coordinates, String... pathComponents) {
-    List<String> path = new ArrayList<>(Arrays.asList(coordinates.getGroupId().split("\\.")));
-    path.add(coordinates.getArtifactId());
-    path.addAll(Arrays.asList(pathComponents));
-    return path.toArray(new String[0]);
+    return openStream(urlFactory.createUrlForArtifact(coordinate));
   }
 
   @Override
   public InputStream openStream(String... pathComponents) throws IOException {
-    var builder = new StringBuilder(url.toExternalForm());
-    if (builder.toString().endsWith("/")) {
-      builder.deleteCharAt(builder.length() - 1);
-    }
-    for (String pathComponent : pathComponents) {
-      builder.append("/").append(pathComponent);
-    }
-    String path = builder.toString();
-
-    try {
-      var url = new URL(path);
-      return openStream(url);
-    } catch (MalformedURLException e) {
-      throw new IllegalArgumentException("Cannot create valid URL for path '" + path + "'", e);
-    }
+    return openStream(urlFactory.createUrlForPath(pathComponents));
   }
 
   private InputStream openStream(URL url) throws IOException {

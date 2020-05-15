@@ -1,23 +1,23 @@
 package de.fxnn.artixray.archive.boundary;
 
 import java.io.InputStream;
-import java.io.OutputStream;
+import java.util.function.Supplier;
 
 public class ArchiveFile {
 
   private final String contentType;
-  private final InputStream inputStream;
+  private final Supplier<InputStream> inputStreamSupplier;
 
-  public ArchiveFile(String contentType, InputStream inputStream) {
+  public ArchiveFile(String contentType, Supplier<InputStream> inputStreamSupplier) {
     this.contentType = contentType;
-    this.inputStream = inputStream;
+    this.inputStreamSupplier = inputStreamSupplier;
   }
 
   public String getContentType() {
     return contentType;
   }
 
-  public InputStream getInputStream() {
-    return inputStream;
+  public InputStream openInputStream() {
+    return inputStreamSupplier.get();
   }
 }

@@ -10,10 +10,6 @@ public class Maven2Version {
     this.version = version;
   }
 
-  public String getVersion() {
-    return version;
-  }
-
   public boolean isPlaceholderOrEmpty() {
     return isEmpty() || isReleasePlaceholder() ||isLatestPlaceholder();
   }
@@ -28,5 +24,10 @@ public class Maven2Version {
 
   public boolean isLatestPlaceholder() {
     return Repository.LATEST_PLACEHOLDER.equals(version);
+  }
+
+  @Override
+  public String toString() {
+    return version;
   }
 }

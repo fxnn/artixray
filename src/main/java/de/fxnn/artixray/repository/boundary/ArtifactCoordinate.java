@@ -1,13 +1,17 @@
 package de.fxnn.artixray.repository.boundary;
 
+import java.util.Objects;
 import java.util.regex.Pattern;
+import javax.validation.constraints.NotNull;
 
 public class ArtifactCoordinate {
 
   static final String COORDINATE_EXAMPLE = "groupId:artifactId[[:type[:classifier]]:version]";
   private static final Pattern COORDINATE_REGEX = Pattern.compile("([^:]+):([^:]+)((:([^:]+)(:([^:]+))?)?:([^:]+))?");
 
+  @NotNull
   private final String groupId;
+  @NotNull
   private final String artifactId;
   private final String type;
   private final String classifier;
@@ -65,6 +69,24 @@ public class ArtifactCoordinate {
       builder.append(":").append(version);
     }
     return builder.toString();
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    ArtifactCoordinate that = (ArtifactCoordinate) o;
+    return groupId.equals(that.groupId) && artifactId.equals(that.artifactId) && Objects.equals(type, that.type)
+        && Objects.equals(classifier, that.classifier) && Objects.equals(version, that.version);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(groupId, artifactId, type, classifier, version);
   }
 
   /**

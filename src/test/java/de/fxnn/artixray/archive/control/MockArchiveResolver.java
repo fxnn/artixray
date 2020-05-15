@@ -4,10 +4,9 @@ import de.fxnn.artixray.archive.boundary.Archive;
 import de.fxnn.artixray.archive.boundary.ArchiveFile;
 import de.fxnn.artixray.archive.boundary.ArchiveResolver;
 import io.quarkus.test.Mock;
-
+import java.io.ByteArrayInputStream;
 import javax.enterprise.context.ApplicationScoped;
 import javax.ws.rs.core.MediaType;
-import java.io.ByteArrayInputStream;
 
 @Mock
 @ApplicationScoped
@@ -25,7 +24,7 @@ public class MockArchiveResolver implements ArchiveResolver {
 
         byte[] resultBytes = resultBuilder.toString().getBytes();
         ByteArrayInputStream resultStream = new ByteArrayInputStream(resultBytes);
-        return new ArchiveFile(MediaType.TEXT_PLAIN, resultStream);
+        return new ArchiveFile(MediaType.TEXT_PLAIN, () -> resultStream);
       }
     };
   }

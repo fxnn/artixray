@@ -6,7 +6,7 @@ import javax.validation.constraints.NotNull;
 
 public class ArtifactCoordinate {
 
-  static final String COORDINATE_EXAMPLE = "groupId:artifactId[[:type[:classifier]]:version]";
+  public static final String COORDINATE_EXAMPLE = "groupId:artifactId[[:type[:classifier]]:version]";
   private static final Pattern COORDINATE_REGEX = Pattern.compile("([^:]+):([^:]+)((:([^:]+)(:([^:]+))?)?:([^:]+))?");
 
   @NotNull

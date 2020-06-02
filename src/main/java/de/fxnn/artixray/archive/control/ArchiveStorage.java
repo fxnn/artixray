@@ -7,5 +7,7 @@ import java.util.function.Function;
 
 public interface ArchiveStorage {
 
+  void initializeStorage();
+
   Archive supplyArchive(ArtifactCoordinate coordinate, Function<ArtifactCoordinate, InputStream> downloadArchive);
 }

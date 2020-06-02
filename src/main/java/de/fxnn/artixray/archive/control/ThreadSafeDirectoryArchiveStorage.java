@@ -21,6 +21,19 @@ public class ThreadSafeDirectoryArchiveStorage implements ArchiveStorage {
   DirectoryArchiveStorage wrapped;
 
   @Override
+  public void initializeStorage() {
+    try {
+      executor
+          .submit(() -> wrapped.initializeStorage())
+          .get();
+    } catch (InterruptedException e) {
+      throw new IllegalStateException("Interrupted unexpectedly while initializing storage", e);
+    } catch (ExecutionException e) {
+      throw new IllegalStateException("Initializing storage failed", e);
+    }
+  }
+
+  @Override
   public Archive supplyArchive(ArtifactCoordinate coordinate, Function<ArtifactCoordinate, InputStream> downloadArchive) {
     try {
       return executor

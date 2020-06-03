@@ -20,7 +20,7 @@ docker run -i --rm -p 8080:8080 fxnn/artixray:latest
 This makes the application available at http://localhost:8080. 
 It contains a minimal user interface, which should be self explanatory.
 
-![Screenshot of the application](screenshot.png)
+<img src="screenshot.png" width="50%" title="Screenshot of the application" />
 
 ## Development  
 

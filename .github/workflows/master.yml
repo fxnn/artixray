@@ -24,6 +24,7 @@ jobs:
     - name: Build with Maven
       run: mvn -B package --file pom.xml
 
+    # cf. https://github.com/marketplace/actions/build-and-push-docker-images
     - name: Build Docker image
       uses: docker/build-push-action@v1
       with:

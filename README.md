@@ -1,30 +1,63 @@
-# artixray project
+# artixray
 
-This project uses Quarkus, the Supersonic Subatomic Java Framework.
+View JavaDoc, HTML reports and more, packaged inside a Maven artifact, just by entering a URL.
 
-If you want to learn more about Quarkus, please visit its website: https://quarkus.io/ .
+This project is a web server that, upon request, instantly retrieves the requested artifact,
+unpacks it and displays the requested file.
 
-## Running the application in dev mode
+It is, however, not intended to be used as public service, as it is neither designed to be scalable,
+nor secure.
 
-You can run your application in dev mode that enables live coding using:
+![Master Build](https://github.com/fxnn/artixray/workflows/Master%20Build/badge.svg)
+
+## Usage
+
+Run the application using Docker.
 ```
-./mvnw quarkus:dev
+docker run -i --rm -p 8080:8080 fxnn/artixray:latest
 ```
 
-## Packaging and running the application
+This makes the application available at http://localhost:8080. 
+It contains a minimal user interface, which should be self explanatory.
 
-The application can be packaged using `./mvnw package`.
+## Development  
+
+### Build
+Run a regular build using `./mvnw package`.
 It produces the `artixray-1.0.0-SNAPSHOT-runner.jar` file in the `/target` directory.
 Be aware that it’s not an _über-jar_ as the dependencies are copied into the `target/lib` directory.
 
 The application is now runnable using `java -jar target/artixray-1.0.0-SNAPSHOT-runner.jar`.
 
-## Creating a native executable
+### Live Coding
+You can run the application in dev mode that enables live coding using:
+```
+./mvnw quarkus:dev
+```
 
-You can create a native executable using: `./mvnw package -Pnative`.
+### Docker
+Create Docker images using the Dockerfiles in `src/main/docker`.
 
-Or, if you don't have GraalVM installed, you can run the native executable build in a container using: `./mvnw package -Pnative -Dquarkus.native.container-build=true`.
+### Related Documentation
+Backend:
+* [Quarkus Java framework](https://quarkus.io/guides/)
+* [GitHub actions](https://help.github.com/en/actions)
 
-You can then execute your native executable with: `./target/artixray-1.0.0-SNAPSHOT-runner`
+Frontend:
+* [Hyperapp webapp framework](https://hyperapp.dev)
+* [Bulma CSS framework](https://bulma.io/documentation/)
 
-If you want to learn more about building native executables, please consult https://quarkus.io/guides/building-native-image.
+## License
+Copyright 2020 Felix Neumann
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.

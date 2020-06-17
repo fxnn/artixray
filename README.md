@@ -8,7 +8,7 @@ unpacks it and displays the requested file.
 It is, however, not intended to be used as public service, as it is neither designed to be scalable,
 nor secure.
 
-![Master Build](https://github.com/fxnn/artixray/workflows/Master%20Build/badge.svg)
+[![Master Build](https://github.com/fxnn/artixray/workflows/Master%20Build/badge.svg)](https://github.com/fxnn/artixray/actions?query=workflow%3A%22Master+Build%22)
 
 ## Usage
 

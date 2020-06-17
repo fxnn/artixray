@@ -50,8 +50,17 @@ public class DirectoryArchiveStorage implements ArchiveStorage {
 
   @Override
   public void initializeStorage() {
+    Path dir = getStorageDir();
+    if (Files.isDirectory(dir)) {
+      removeAllArchives(dir);
+    } else {
+      createDir(dir);
+    }
+  }
+
+  private void removeAllArchives(Path dir) {
     try (DirectoryStream<Path> files = Files
-        .newDirectoryStream(getStorageDir(), ARCHIVE_PREFIX + "*" + ARCHIVE_SUFFIX)) {
+        .newDirectoryStream(dir, ARCHIVE_PREFIX + "*" + ARCHIVE_SUFFIX)) {
       long sizeDeleted = 0;
       long numberDeleted = 0;
       for (Path file : files) {
@@ -64,9 +73,9 @@ public class DirectoryArchiveStorage implements ArchiveStorage {
         }
       }
       LOG.info("Deleted {} bytes from {} pre-existing files in storage dir '{}'", sizeDeleted,
-          numberDeleted, getStorageDir());
+          numberDeleted, dir);
     } catch (IOException ex) {
-      LOG.warn("Failed to read files in storage dir '" + getStorageDir() + "'", ex);
+      LOG.warn("Failed to read files in storage dir '" + dir + "'", ex);
     }
   }
 
@@ -142,9 +151,15 @@ public class DirectoryArchiveStorage implements ArchiveStorage {
   }
 
   private Path createTemporaryArchiveFile() throws IOException {
-    Path dir = getStorageDir();
-    Files.createDirectories(dir);
-    return Files.createTempFile(dir, ARCHIVE_PREFIX, ARCHIVE_SUFFIX);
+    return Files.createTempFile(getStorageDir(), ARCHIVE_PREFIX, ARCHIVE_SUFFIX);
+  }
+
+  private void createDir(Path dir) {
+    try {
+      Files.createDirectories(dir);
+    } catch (IOException e) {
+      throw new IllegalStateException("Failed to create storage dir '" + storageDir + "'", e);
+    }
   }
 
   private Path getStorageDir() {

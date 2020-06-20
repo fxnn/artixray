@@ -1,9 +1,13 @@
 # artixray
 
-View JavaDoc, HTML reports and more, packaged inside a Maven artifact, just by entering a URL.
+No need to deploy your JavaDoc, HTML reports or project site to a webserver.
+No need to upload it to your wiki.
+Simply enter a URL, and _artixray_ cares for the rest.
 
-This project is a web server that, upon request, instantly retrieves the requested artifact,
-unpacks it and displays the requested file.
+This project is a web server that, upon request, instantly retrieves the requested artifact
+from a Maven repository, unpacks it and displays the requested file.
+All transparent to you, who simply gets served the artifact's contents.
+`RELEASE` and `SNAPSHOT` version placeholders supported.
 
 It is, however, not intended to be used as public service, as it is neither designed to be scalable,
 nor secure.

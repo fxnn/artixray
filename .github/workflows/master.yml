@@ -11,6 +11,18 @@ jobs:
 
     runs-on: ubuntu-latest
 
+    strategy:
+      matrix:
+        includes:
+          - mvnNativeArg: -Pnative
+            archiveSuffix: -native
+            dockerfileName: Dockerfile.native
+            dockerImageTag: native
+          - mvnNativeArg: ""
+            archiveSuffix: ""
+            dockerfileName: Dockerfile.jvm
+            dockerImageTag: latest
+
     steps:
 
     # setup
@@ -25,17 +37,17 @@ jobs:
     # Maven
 
     - name: Build with Maven
-      run: mvn -B package --file pom.xml
+      run: mvn -B package --file pom.xml ${{ matrix.mvnNativeArg }}
       
     - name: Archive JAR files
       uses: actions/upload-artifact@v2
       with:
-        name: jar
+        name: jar${{ matrix.archiveSuffix }}
         path: target/*.jar
     - name: Archive Surefire reports
       uses: actions/upload-artifact@v2
       with:
-        name: surefire-reports
+        name: surefire-reports${{ matrix.archiveSuffix }}
         path: target/surefire-reports/*.xml
 
     # Docker
@@ -44,9 +56,9 @@ jobs:
     - name: Build Docker image
       uses: docker/build-push-action@v1
       with:
-        dockerfile: src/main/docker/Dockerfile.jvm
+        dockerfile: src/main/docker/${{ matrix.dockerfileName }}
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
         repository: fxnn/artixray
-        tags: latest
+        tags: ${{ matrix.dockerImageTag }}
         add_git_labels: true

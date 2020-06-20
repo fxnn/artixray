@@ -52,12 +52,12 @@ jobs:
 
     # Docker
 
-    -  name: Set env vars
-       env:
-         DOCKERFILE_NAME: ${{ matrix.dockerfileName }}
-         DOCKER_IMAGE_TAG: ${{ matrix.dockerImageTag }}
-        run: echo ${env:DOCKERFILE_NAME} ${env:DOCKER_IMAGE_TAG}
-        shell: bash
+    - name: Set env vars
+      env:
+        DOCKERFILE_NAME: ${{ matrix.dockerfileName }}
+        DOCKER_IMAGE_TAG: ${{ matrix.dockerImageTag }}
+      run: echo ${env:DOCKERFILE_NAME} ${env:DOCKER_IMAGE_TAG}
+      shell: bash
 
     # cf. https://github.com/marketplace/actions/build-and-push-docker-images
     - name: Build Docker image

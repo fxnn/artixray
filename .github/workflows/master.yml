@@ -27,10 +27,14 @@ jobs:
     # setup
       
     - name: Set up JDK 11
+      if: ${{ matrix.quarkusMode == 'jvm' }}
       uses: actions/setup-java@v1
       with:
         java-version: 11
         java-package: jdk
+    - name: Set up GraalVM
+      if: ${{ matrix.quarkusMode == 'native' }}
+      uses: DeLaGuardo/setup-graalvm@3
     - uses: actions/checkout@v2
 
     # Maven

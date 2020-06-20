@@ -7,7 +7,7 @@ Simply enter a URL, and _artixray_ cares for the rest.
 This project is a web server that, upon request, instantly retrieves the requested artifact
 from a Maven repository, unpacks it and displays the requested file.
 All transparent to you, who simply gets served the artifact's contents.
-`RELEASE` and `SNAPSHOT` version placeholders supported.
+`RELEASE` and `LATEST` version placeholders supported.
 
 It is, however, not intended to be used as public service, as it is neither designed to be scalable,
 nor secure.
@@ -16,7 +16,7 @@ nor secure.
 
 ## Usage
 
-Run the application using Docker.
+Run the application using [Docker](https://hub.docker.com/r/fxnn/artixray).
 ```
 docker run -i --rm -p 8080:8080 fxnn/artixray:latest
 ```
@@ -25,6 +25,15 @@ This makes the application available at http://localhost:8080.
 It contains a minimal user interface, which should be self explanatory.
 
 <img src="screenshot.png" width="50%" title="Screenshot of the application" />
+
+Special cases:
+
+* Omitting the version defaults to the `LATEST` placeholder.
+* The special version placeholders `LATEST` and `RELEASE` resolve to the latest version, resp. the
+  latest release version in the repository, as specified in the
+  [Maven Repository Documentation](https://maven.apache.org/ref/3.5.2/maven-repository-metadata/repository-metadata.html#class_versioning).
+* Omitting the type defaults to `jar`.
+* Omitting the classifier makes _artixray_ look for an artifact without classifier.
 
 ## Development  
 

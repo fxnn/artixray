@@ -12,6 +12,7 @@ jobs:
     runs-on: ubuntu-latest
 
     strategy:
+      fail-fast: false
       matrix:
         quarkusMode: [jvm, native]
         include:
@@ -34,7 +35,11 @@ jobs:
         java-package: jdk
     - name: Set up GraalVM
       if: ${{ matrix.quarkusMode == 'native' }}
-      uses: DeLaGuardo/setup-graalvm@3
+      uses: rinx/setup-graalvm-ce@v0.0.3
+      with:
+        graalvm-version: "20.1.0"
+        java-version: "java11"
+        native-image: "true"
     - uses: actions/checkout@v2
 
     # Maven

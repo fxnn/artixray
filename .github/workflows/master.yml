@@ -13,15 +13,14 @@ jobs:
 
     strategy:
       matrix:
+        quarkusMode: [jvm, native]
         includes:
-          - mvnNativeArg: -Pnative
-            archiveSuffix: -native
-            dockerfileName: Dockerfile.native
+          - quarkusMode: native
             dockerImageTag: native
-          - mvnNativeArg: ""
-            archiveSuffix: ""
-            dockerfileName: Dockerfile.jvm
+            mvnNativeArg: -Pnative
+          - quarkusMode: jvm
             dockerImageTag: latest
+            mvnNativeArg: -P!native
 
     steps:
 
@@ -42,30 +41,23 @@ jobs:
     - name: Archive JAR files
       uses: actions/upload-artifact@v2
       with:
-        name: jar${{ matrix.archiveSuffix }}
+        name: jar-${{ matrix.quarkusMode }}
         path: target/*.jar
     - name: Archive Surefire reports
       uses: actions/upload-artifact@v2
       with:
-        name: surefire-reports${{ matrix.archiveSuffix }}
+        name: surefire-reports-${{ matrix.quarkusMode }}
         path: target/surefire-reports/*.xml
 
     # Docker
-
-    - name: Set env vars
-      env:
-        DOCKERFILE_NAME: ${{ matrix.dockerfileName }}
-        DOCKER_IMAGE_TAG: ${{ matrix.dockerImageTag }}
-      run: echo ${env:DOCKERFILE_NAME} ${env:DOCKER_IMAGE_TAG}
-      shell: bash
 
     # cf. https://github.com/marketplace/actions/build-and-push-docker-images
     - name: Build Docker image
       uses: docker/build-push-action@v1
       with:
-        dockerfile: src/main/docker/${{ env.DOCKERFILE_NAME }}
+        dockerfile: src/main/docker/Dokerfile.${{ matrix.quarkusMode }}
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
         repository: fxnn/artixray
-        tags: ${{ env.DOCKER_IMAGE_TAG }}
+        tags: ${{ matrix.dockerImageTag }}
         add_git_labels: true

@@ -64,7 +64,7 @@ jobs:
     - name: Build Docker image
       uses: docker/build-push-action@v1
       with:
-        dockerfile: src/main/docker/Dokerfile.${{ matrix.quarkusMode }}
+        dockerfile: src/main/docker/Dockerfile.${{ matrix.quarkusMode }}
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
         repository: fxnn/artixray

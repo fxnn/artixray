@@ -1,10 +1,10 @@
 package de.fxnn.artixray.bootstrap.boundary;
 
-import com.google.common.base.Throwables;
 import de.fxnn.artixray.archive.boundary.Archive;
 import de.fxnn.artixray.archive.boundary.ArchiveFile;
 import de.fxnn.artixray.archive.boundary.ArchiveResolver;
 import de.fxnn.artixray.repository.boundary.ArtifactCoordinate;
+import de.fxnn.artixray.util.boundary.Throwables;
 import java.net.URI;
 import java.net.URISyntaxException;
 import javax.inject.Inject;
@@ -65,7 +65,7 @@ public class Application {
       ArchiveFile file = archive.readFile(filePath);
       return Response.ok(file.openInputStream(), file.getContentType()).build();
     } catch (Exception ex) {
-      String stackTrace = Throwables.getStackTraceAsString(ex);
+      String stackTrace = Throwables.stackTraceToString(ex);
       return Response.serverError()
           .type(MediaType.TEXT_PLAIN_TYPE)
           .entity(String.format("Failed to deliver file\n\t%s\nfor artifact\n\t%s\n\n%s", filePath,

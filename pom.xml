@@ -177,6 +177,7 @@
       </build>
       <properties>
         <quarkus.package.type>native</quarkus.package.type>
+        <quarkus.native.additional-build-args>-H:EnableURLProtocols=http,https</quarkus.native.additional-build-args>
       </properties>
     </profile>
 
